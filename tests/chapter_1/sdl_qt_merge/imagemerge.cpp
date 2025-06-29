@@ -19,41 +19,41 @@ ImageMerge::ImageMerge(QWidget *parent)
 {
     ui.setupUi(this);
 
-	// ´ò¿ªÁ½·ùÍ¼Ïñ
+	// æ‰“å¼€ä¸¤å¹…å›¾åƒ
 	QImage img1("1.jpeg");
 	QImage img2("2.jpg");
-	// ÅĞ¶ÏÍ¼ÏñÊÇ·ñ´ò¿ª³É¹¦
+	// åˆ¤æ–­å›¾åƒæ˜¯å¦æ‰“å¼€æˆåŠŸ
 	if (img1.isNull() || img2.isNull()) {
 		QMessageBox::information(this, "error", "open image failed!");
 		return;
 	}
 
-	// ¸üĞÂ´°¿ÚµÄ¿í¶ÈºÍ¸ß¶È
+	// æ›´æ–°çª—å£çš„å®½åº¦å’Œé«˜åº¦
 	int out_w = img1.width() + img2.width();
 	int out_h = img1.height();
-	// È¡Á½·ùÍ¼Ïñ¸ß¶ÈµÄ×î´óÖµ
+	// å–ä¸¤å¹…å›¾åƒé«˜åº¦çš„æœ€å¤§å€¼
 	if (out_h < img2.height()) {
 		out_h = img2.height();
 	}
 	sdl_width = out_w;
 	sdl_height = out_h;
 
-	// ÖØÖÃ´°¿Ú´óĞ¡
+	// é‡ç½®çª—å£å¤§å°
 	resize(sdl_width, sdl_height);
 	ui.label->move(0, 0);
-	// ĞèÒªĞŞ¸Älabel´óĞ¡
+	// éœ€è¦ä¿®æ”¹labelå¤§å°
 	ui.label->resize(sdl_width, sdl_height);
 
-	// ³õÊ¼»¯SDL video¿â
+	// åˆå§‹åŒ–SDL videoåº“
 	SDL_Init(SDL_INIT_VIDEO);
 
-	// ½«sdläÖÈ¾µÄÍ¼ÏñÊı¾İ£¬°ó¶¨µ½qt¿Ø¼şÉÏ
+	// å°†sdlæ¸²æŸ“çš„å›¾åƒæ•°æ®ï¼Œç»‘å®šåˆ°qtæ§ä»¶ä¸Š
 	sdl_win = SDL_CreateWindowFrom((void*)ui.label->winId());
 	
-	// ´´½¨äÖÈ¾Æ÷
+	// åˆ›å»ºæ¸²æŸ“å™¨
 	sdl_render = SDL_CreateRenderer(sdl_win, -1, SDL_RENDERER_ACCELERATED);
 
-	// ´´½¨²ÄÖÊ
+	// åˆ›å»ºæè´¨
 	sdl_texture = SDL_CreateTexture(sdl_render,
 		SDL_PIXELFORMAT_ARGB8888,
 		SDL_TEXTUREACCESS_STREAMING,
@@ -65,27 +65,27 @@ ImageMerge::ImageMerge(QWidget *parent)
 		return;
 	}
 
-	// ¿ª±ÙÁ½·ùÍ¼Ïñ´óĞ¡µÄ¿Õ¼ä
+	// å¼€è¾Ÿä¸¤å¹…å›¾åƒå¤§å°çš„ç©ºé—´
 	rgb = new unsigned char[sdl_width * sdl_height * pix_size];
 
-	// Ä¬ÈÏÉèÖÃÎªÍ¸Ã÷ 
+	// é»˜è®¤è®¾ç½®ä¸ºé€æ˜ 
 	memset(rgb, 0, sdl_width * sdl_height * pix_size);
-	// ¿ªÊ¼ºÏ²¢Á½·ùÍ¼Ïñ
+	// å¼€å§‹åˆå¹¶ä¸¤å¹…å›¾åƒ
 	for (int i = 0; i < sdl_height; i++) {
 		int gap = i * sdl_width * pix_size;
 		if (i < img1.height()) {
-			// ¿½±´Í¼Ïñ1¸ÃĞĞµÄÍ¼ÏñÊı¾İ
+			// æ‹·è´å›¾åƒ1è¯¥è¡Œçš„å›¾åƒæ•°æ®
 			memcpy(rgb + gap, img1.scanLine(i), img1.width() * pix_size);
 		}
-		// ¸üĞÂgap£¬Ö¸Ïò¸ÃĞĞÍ¼Ïñ2µÄÆğÊ¼Î»ÖÃ
+		// æ›´æ–°gapï¼ŒæŒ‡å‘è¯¥è¡Œå›¾åƒ2çš„èµ·å§‹ä½ç½®
 		gap += img1.width() * pix_size;
 		if (i < img2.height()) {
-			// ¿½±´Í¼Ïñ2¸ÃĞĞµÄÍ¼ÏñÊı¾İ
+			// æ‹·è´å›¾åƒ2è¯¥è¡Œçš„å›¾åƒæ•°æ®
 			memcpy(rgb + gap, img2.scanLine(i), img2.width() * pix_size);
 		}
 	}
-	// ×¢Òâ¸ñÊ½ÒªºÍSDL¸ñÊ½Ò»ÖÂ
-	// ±£´æºÏ²¢ºóµÄÎÄ¼şµ½±¾µØ
+	// æ³¨æ„æ ¼å¼è¦å’ŒSDLæ ¼å¼ä¸€è‡´
+	// ä¿å­˜åˆå¹¶åçš„æ–‡ä»¶åˆ°æœ¬åœ°
 	QImage out(rgb, sdl_width, sdl_height, QImage::Format_ARGB32);
 	out.save("out.png");
 
@@ -110,20 +110,20 @@ void ImageMerge::timerEvent(QTimerEvent * ev)
 		}
 	}
 
-	// ½«ÄÚ´æÊı¾İĞ´Èë²ÄÖÊ
+	// å°†å†…å­˜æ•°æ®å†™å…¥æè´¨
 	SDL_UpdateTexture(sdl_texture, NULL, rgb, sdl_width * pix_size);
-	// ÇåÀíÆÁÄ»
+	// æ¸…ç†å±å¹•
 	SDL_RenderClear(sdl_render);
 	SDL_Rect sdl_rect;
 	sdl_rect.x = 0;
 	sdl_rect.y = 0;
 	sdl_rect.w = sdl_width;
 	sdl_rect.h = sdl_height;
-	// ½«²ÄÖÊÊı¾İ¸´ÖÆµ½äÖÈ¾
+	// å°†æè´¨æ•°æ®å¤åˆ¶åˆ°æ¸²æŸ“
 	SDL_RenderCopy(sdl_render, sdl_texture,
-		NULL,		// Ô­Í¼Î»ÖÃºÍ³ß´ç
-		&sdl_rect	// Ä¿±êÎ»ÖÃºÍ³ß´ç
+		NULL,		// åŸå›¾ä½ç½®å’Œå°ºå¯¸
+		&sdl_rect	// ç›®æ ‡ä½ç½®å’Œå°ºå¯¸
 	);
-	// ¸üĞÂÆÁÄ»ÏÔÊ¾
+	// æ›´æ–°å±å¹•æ˜¾ç¤º
 	SDL_RenderPresent(sdl_render);
 }
